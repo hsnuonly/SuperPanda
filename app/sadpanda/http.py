@@ -7,6 +7,7 @@ from flask import current_app, request
 
 from app import store
 from . import categories, pages
+from functools import lru_cache
 
 session = requests.session()
 session.headers.update({'User-Agent': str(UserAgent().chrome)})
@@ -31,6 +32,7 @@ def build_url(url, base_url=None):
         url = urljoin(base_url, url)
     return url
 
+@lru_cache(maxsize=None)
 def call(url: str, params={}, base_url=None, method='GET'):
     url = build_url(url, base_url=base_url)
     # logging.info('HTTP {} "{}" {}'.format(method, url, params))
@@ -64,5 +66,6 @@ def get_page():
     except TypeError:
         return 1
 
+@lru_cache(maxsize=None)
 def to_soup(x):
     return BeautifulSoup(x, 'html.parser')

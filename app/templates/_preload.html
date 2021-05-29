@@ -1,0 +1,10 @@
+{% with current_page = data.page if data|type == 'Page' else -1 %}
+<link
+    rel="prefetch"
+	href="{{ page.reader_url }}"
+	class="
+		prefetch
+        {{page.page}}
+	"
+>
+{% endwith %}

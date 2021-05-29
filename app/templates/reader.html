@@ -16,6 +16,7 @@
 		{% with page = data.next %}{% include "_preview.html" %}{% endwith %}
 	</div>
 	<div class="preload">
+		{% with page = data.next %}{% include "_preload.html" %}{% endwith %}
 	</div>
 	<footer>
 		<p>{{ data.page }} / {{ data.pages_count }}</p>

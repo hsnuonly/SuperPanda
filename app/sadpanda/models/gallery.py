@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 import re
+from typing import Set
 from flask import url_for, request
 
 from .. import categories, http, pages, tags, favorites
@@ -185,21 +186,20 @@ class Gallery(DictObject):
     def from_id(cls, id, token, page=None, has_pages=[]):
         logging.debug('Creating gallery from ID')
         page = (page or http.get_page()) - 1
-        missing = []
+        missing = set()
         url=pages.GALLERY_ROUTE.format(id=id, token=token, page=page)
         logging.debug('Requesting base gallery')
         result = cls.from_gallery_soup(
             http.to_soup(http.call(url).content),
             id=id, token=token, url=url,
         )
-        is_large = result.first_page.type == 'image'
         for page in has_pages:
-            page = (page - 1) // (20 if is_large else 40)
-            if page not in missing and page > (0 if is_large else 1):
-                missing.append(page)
+            page = (page - 1) // 40
+            if page > 0:
+                missing.add(page)
         urls = [
             pages.GALLERY_ROUTE.format(id=id, token=token, page=page)
-            for page in missing
+            for page in list(missing)
         ]
         logging.debug('Requesting additional gallery pages {}'.format(missing))
         for url in urls:
